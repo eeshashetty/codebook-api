@@ -1,5 +1,6 @@
 const express = require('express')
 const path = require('path')
+const hbs = require('hbs')
 const bodyParser = require('body-parser')
 require('./db/mongoose')
 
@@ -7,15 +8,30 @@ const User = require('./models/user')
 
 const app = express()
 const port = process.env.PORT
+
+
 const publicDirectoryPath = path.join(__dirname, '../public')
+const viewsDirectoryPath = path.join(__dirname, '../templates/views')
+const partialsDirectoryPath = path.join(__dirname, '../templates/partials')
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended: true}))
 
 app.use(express.static(publicDirectoryPath))
+app.set('views', viewsDirectoryPath)
+app.set('view engine', 'hbs')
+hbs.registerPartials(partialsDirectoryPath)
 
 app.get('/', (req,res) => {
-    res.status(200).render('index.html')
+    res.status(200).render('index')
+})
+
+app.get('/login', (req,res) => {
+    res.status(200).render('login')
+})
+
+app.get('/signup', (req,res) => {
+    res.status(200).render('signup')
 })
 
 app.post('/signup', async (req,res) => {
@@ -29,13 +45,13 @@ app.post('/signup', async (req,res) => {
     }
 })
 
-app.post('/login', async (req,res) => {
+app.post('/feed', async (req,res) => {
     const email = req.body.email
     const password = req.body.password
     try {
         const user = await User.findByCreds(email, password)
         const token = await user.generateAuthToken
-        res.send({user, token})
+        res.render('feed', {user: user})
 
     } catch(e) {
         res.status(400).send(e)
