@@ -2,6 +2,7 @@ const mongoose = require('mongoose')
 const bcrypt = require('bcryptjs')
 const validator = require('validator')
 const jwt = require('jsonwebtoken')
+const Post = require('./post')
 
 const userSchema = new mongoose.Schema({
     firstname: {
@@ -45,9 +46,26 @@ const userSchema = new mongoose.Schema({
 
     },
 
-    gender: {
-        type: String,
-        required: true
+    following: {
+        type: [{
+            f: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'User'
+            }
+        }]
+    },
+
+    followers: {
+        type: [{
+            follower: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'User'
+            }
+        }]
+    },
+
+    pfp: {
+        type: Buffer
     },
 
     tokens: [{
@@ -57,12 +75,16 @@ const userSchema = new mongoose.Schema({
         }
     }],
 
-    pfp: {
-        type: Buffer
-    }
+   
 }, {
     timestamps: true
 });
+
+userSchema.virtual('posts', {
+    ref: 'Post',
+    localField: '_id',
+    foreignField: 'creator'
+})
 
 userSchema.methods.generateAuthToken = async function () {
     const user = this
