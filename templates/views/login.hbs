@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Codebook</title>
+        <style>
+            body{
+                font-family: 'Montserrat', sans-serif;
+                background-color: #000000;
+                color: white;
+            }
+            form {
+                text-align: center;
+                border-radius: 9px;
+                max-width: 70%;
+                height: 500px;
+                text-align: center;
+                border: 2px solid black;
+                margin-top: 200px;
+                margin-left: auto;
+                margin-right: auto;
+                padding: 20px;
+                background-color: white;
+            }
+
+        input{
+            display: block;
+            padding: 10px;
+            margin: 15px;
+            width: 400px;
+            height: 30px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        input[type="submit"]{
+            border: none;
+            border-radius: 9px;
+            padding: 10px;
+            height: 50px;
+            margin: 20px;
+            color: white;
+            font-size: 20px;
+            font-weight: 300;
+            width: 200px;
+            background-color: #FA759E;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        h3 {
+            margin-top: 30px;
+            color: black;
+            font-weight: 300;
+            font-size: 36px;
+        }
+        </style>
+    </head>
+    <body>
+        <form action="/api/login" method="POST">
+        <br><br><br>
+        <h3>Log In</h3><br>
+        <input type="email" name="email" placeholder="Email" required/>
+        <input type="password" name="password" placeholder="Password" required/>
+        <br><input type="submit" value="Login"/><br>
+        </form>
+    </body>
+</html>

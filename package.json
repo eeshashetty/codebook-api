@@ -4,7 +4,7 @@
   "description": "Learning how to build a social media website using NodeJS",
   "main": "index.js",
   "scripts": {
-    "dev": "./node_modules/.bin/env-cmd -f config/dev.env nodemon src/index.js "
+    "dev": "nodemon -e hbs,js src/index.js "
   },
   "repository": {
     "type": "git",
@@ -25,6 +25,9 @@
     "hbs": "^4.1.1",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.9.25",
+    "multer": "^1.4.2",
+    "path": "^0.12.7",
+    "sharp": "^0.26.2",
     "validator": "^13.1.1"
   }
 }

@@ -1,0 +1,221 @@
+<html>
+    <head>
+        <title>Codebook Feed</title>
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+  rel="stylesheet">
+        <style>
+            @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap');
+            @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap');
+            body {
+                font-family: 'Montserrat', sans-serif;
+                background-color: #000000;
+            }
+
+            a{
+                text-decoration: none;
+                color: white;
+            }
+            .col {
+                color: white;
+                font-size: 18;
+                padding: 30px;
+                border-radius: 9px;
+                display: grid;
+                grid-template-columns: auto auto;
+                width: max-content;
+                margin: 20px;
+                margin-top: 120px;
+                margin-right: auto;
+                margin-left: auto;
+            }
+
+            .row {
+                display: grid;
+                grid-template-rows: auto auto;
+                width: max-content;
+                margin-left: 315px;
+            }
+
+            .fp{
+                margin-top: 10px;
+                text-align: center;
+            }
+
+            .nav {
+                display: inline-block;
+                overflow: hidden;
+                position: fixed;
+                top:0;
+                background-color: #2E3031;
+                width: 110%;
+                color: white;
+                margin-left: -10px;
+                margin-top: -10px;
+                margin-bottom: 25px;
+            }
+
+            .navp {
+                display: inline-block;
+                padding: 15px;
+            }
+
+            .navp:hover{
+                font-weight: bold;
+            }
+
+            .box {
+                width: 134px;
+                height: 40px;
+                background-color: #FA759E;
+                color: white;
+                margin: 10px;
+            }
+            .grid{
+                display: grid;
+                grid-column-gap: 50px;
+                grid-row-gap: 50px;
+                margin-left: 40px;
+            }
+            @media (min-width: 800px) {
+            .grid { grid-template-columns: repeat(2, 2fr); }
+            }
+
+            @media (min-width: 1200px) {
+            .grid { grid-template-columns: repeat(3, 2fr); }
+            }
+
+            .textb {
+                word-wrap: break-word;
+                width: 500px;
+                height: max-content;
+                background-color: #2F3443;
+            }
+
+            .name{
+                margin-top: 30px;
+                font-size: 22px;
+                color: white;
+            }
+            textarea {
+                background-color: #2F3443;
+                font-family: 'Montserrat', sans-serif;
+                border: none;
+                color: white;
+                padding: 20px;
+                text-align: center;
+                font-size: 15px;
+                resize: none;
+            }
+            .ta{
+                font-family: 'Montserrat', sans-serif;
+                color: white;
+                max-height: 160px;
+                overflow: auto;
+                margin-top: 30px;
+                padding-left: 20px;
+                padding-right: 20px;
+                width: 300px;
+                text-align: left;
+                font-size: 15px;
+            }
+
+            .user{
+                font-size: 25px;
+                color: white;
+                text-align: left;
+                margin-top: 35px;
+                margin-left: 73px;
+            }
+
+            #time {
+                font-family: 'Montserrat', sans-serif;
+                color: #FA759E;
+                text-align: left;
+                margin-top: -10px;
+                margin-left: -50px;
+                font-size: 12px;
+                width: 300px;
+            }
+            .postbtn{
+                padding: 10px;
+                margin-left: 250px;
+                background-color: #FA759E;
+                border: none; 
+                color: white;
+                width: 100px;
+                border-radius: 9px;
+            }
+            h2{
+                margin-top:150px;
+                color: white;
+                font-size: 55px;
+            }
+
+            input[type="text"]{
+                padding:20px;
+                height: 50px;
+                width: 500px;
+            }
+            #search {
+                display: inline-block;
+            }
+            input[type="submit"]{
+                display: inline-block;
+                width: 65px;
+                height: 50px;
+                text-align: center;
+                margin-top: 20px;
+                color: white;
+                border-radius: 5px;
+                font-size: 15px;
+                background-color: #FA759E;
+                border: none;
+                font-weight: bold;
+
+            }
+            a{
+                text-align: right;
+            }
+            i{
+                color: white;
+                text-align: right;
+                margin-top: 20px;
+            }
+            .likeb{
+                margin-top: 30px;
+                display: grid;
+                grid-template-columns: auto auto;
+            }
+            
+        </style>
+    </head>
+    <body>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        {{>header}}
+        <center><h2>< Dev /> Feed</h2></center>
+        <hr><br>
+        <center>
+        <form id="search" action="/api/users/search" method="POST"> 
+            <input type="hidden" name="uid" value="{{user.id}}">
+            <input id="myInput" name="name" type="text" placeholder="Find More Users to Follow? Type 'All' to see all users">
+            <input type=submit value="GO">
+        </form>
+        </center>
+        <br><hr><br><br>
+        <center>
+        <div class="grid">
+        {{#each posts}}
+        <div class="textb">
+            <center>
+            <p class="user">{{this.creator_name}}</p>
+            <p id="time"><b>Created on </b>{{this.createdAt}}</p>
+            <p class="ta">{{this.description}}</p>
+            <div class="likeb"><a href='/api/posts/{{this._id}}/like?user={{../user.id}}'><i class="material-icons not-liked bouncy">favorite_border</i></a><p style="margin-left:15px;text-align: left; font-size: 20px; color:white;">{{this.likes}} Likes</p></div>
+            </center>
+        </div>
+        {{/each}}
+        </div>
+        </center>
+        </div>
+    </body>
+</html>

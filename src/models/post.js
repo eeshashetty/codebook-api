@@ -1,28 +1,19 @@
 const mongoose = require('mongoose')
 
-const Post = mongoose.Model('Post', mongoose.Schema({
-    location: {
-        type: [Number]
-    },
-    link: {
-        type: String
-    },
-    embed: {
-        type: String
-    },
+const Post = mongoose.model('Post', mongoose.Schema({
     description: {
         type: String
     },
     likes: {
         type: Number
     },
-    photos: {
-        type: [Buffer]
-    },
     creator: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
         ref: 'User'
+    },
+    creator_name: {
+        type: String
     }
 }, {
     timestamps: true

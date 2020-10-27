@@ -1,0 +1,100 @@
+<html>
+    <head>
+        <title>Codebook Feed</title>
+        <style>
+            @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap');
+            @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap');
+            body {
+                font-family: 'Montserrat', sans-serif;
+                background-color: #000000;
+            }
+
+            a{
+                text-decoration: none;
+                color: white;
+            }
+            .fp{
+                margin-top: 10px;
+                text-align: center;
+            }
+
+            .nav {
+                display: inline-block;
+                overflow: hidden;
+                position: fixed;
+                top:0;
+                background-color: #2E3031;
+                width: 110%;
+                color: white;
+                margin-left: -10px;
+                margin-top: -10px;
+                margin-bottom: 25px;
+            }
+
+            .navp {
+                display: inline-block;
+                padding: 15px;
+            }
+
+            .navp:hover{
+                font-weight: bold;
+            }
+            .final{
+                display: block;
+            }
+            .name{
+                display: inline-block;
+                width: 500px;
+                grid-template-columns: auto auto;
+                margin: 30px;
+                padding: 15px;
+                font-size: 22px;
+                color: white;
+                border: 2px solid white;
+            }
+            .btn{
+                padding: 10px;
+                background-color: #FA759E;
+                margin-top: -70px;
+                border: none; 
+                color: white;
+                width: 100px;
+                height: 50px;
+                border-radius: 9px;
+            }
+            h2{
+                margin-top:150px;
+                color: white;
+                font-size: 35px;
+            }
+
+            
+        </style>
+    </head>
+    <body>
+        {{>header}}
+        <center>
+        <h2>Users Found</h2><br>
+        <hr><br><br>
+        </center>
+        {{#each nofollow}}
+        <div class="final">
+        <div class = "name">
+            {{this.firstname}} {{this.lastname}}<br>
+            <i>{{this.email}}</i>
+        </div>
+        <a href="/api/users/follow?current={{../user._id}}&user={{this._id}}"><button class='btn'>Follow</button></a>
+        </div>
+        {{/each}}
+        {{#each follow}}
+        <div class="final">
+        <div class = "name">
+            {{this.firstname}} {{this.lastname}}<br>
+            <i>{{this.email}}</i>
+        </div>
+        <button style="background-color: #B1D7FE;" class='btn'>Following</button>
+        </div>
+        {{/each}}
+        
+    </body>
+</html>

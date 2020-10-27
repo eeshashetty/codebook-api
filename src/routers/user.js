@@ -9,14 +9,27 @@ const sharp = require('sharp')
 const Post = require('../models/post')
 
 // Sign Up 
+
+router.get('/', async(req,res) => {
+    res.render('index')
+})
+router.get('/signup', async(req,res) => {
+    res.render('signup')
+})
+router.get('/login', async(req,res) => {
+    res.render('login')
+})
+router.get('/users', async(req,res) => {
+    const users = await User.find()
+    res.send(users)
+})
 router.post('/api/signup', async (req,res) => {
     const user = new User(req.body)
     try {
         await user.save()
-        const token = await user.generateAuthToken()
-        res.status(201).send({user, token})
+        res.status(201).redirect(`/api/users/me?user=${user._id}`);
     } catch(e) {
-        res.status(500).render(e)
+        res.status(500).send(e)
     }
 })
 
@@ -28,7 +41,8 @@ router.post('/api/login', async (req,res) => {
     try {
         const user = await User.findByCreds(email, password)
         const token = await user.generateAuthToken
-        res.status(200).send({'message': 'Logged in successfully!', user: user})
+
+        res.redirect(`/api/users/me?user=${user._id}`);
 
     } catch(e) {
         res.status(400).send(e)
@@ -36,38 +50,132 @@ router.post('/api/login', async (req,res) => {
 })
 
 // Logout of Session
-router.post('/api/users/logout', auth, async(req, res) => {
+router.get('/api/users/logout', async(req, res) => {
+    res.render('index')
+})
+
+// Fetch Profile Page
+router.get('/api/users/me', async (req,res) => {
+    const id = req.query['user']
     try {
-        req.user.tokens = req.user.tokens.filter((token) => {
-            return token.token !== req.token
-        })
-
-        await req.user.save()
-
-        res.send()
-    } catch (e) {
+        var posts = await Post.find({creator: id})
+        const user = await User.findById(id)
+        posts = posts.reverse()
+        res.render('profile',{'user':user, 'posts':posts})
+    } catch(e) {
         res.status(500).send(e)
     }
 })
 
-// Fetch Profile Page
-router.get('/api/users/me', auth, async (req,res) => {
-    res.send(req.user)
-})
-
 // Fetch User's Following Feed
-router.get('/api/feed', auth, async(req,res) => {
+router.get('/api/feed', async(req,res) => {
     try {
-        const following = req.user.following,
-        const posts = []
-        following.forEach((f) => {
-            const p = await Post.find({creator: f})
+        const id = req.query['user']
+        const user = await User.findById(id)
+        const following = user.following
+        let posts = []
+        for(f of following) {
+            const p = await Post.find({creator: f._id})
             posts.push(...p)
-        })
-        return res.status(200).send(posts)
+        }
+
+        posts = posts.reverse()
+       
+        res.render('feed',{'user':user, 'posts':posts})
     }
     catch(e){
         res.status(400).send(e)
+    }
+})
+
+
+router.get('/api/users/follow', async(req,res) => {
+    const cid = req.query['current']
+    const uid = req.query['user']
+    try {
+        const current = await User.findById(cid)
+        const user = await User.findById(uid)
+        const id = user._id
+        current.following = current.following.concat(user)
+        user.followers = user.followers.concat(current)
+        current.save()
+        user.save()
+        res.status(200).redirect(`/api/users/me?user=${cid}`)
+        }
+    catch(e) {
+        res.status(500).send(e)
+    }
+})
+
+router.post('/api/users/search', async(req,res) => {
+    const name = req.body.name
+    const id = req.body.uid
+    try{
+        const u = await User.findById(id)
+        var all = await User.find()
+        var nofollow = []
+        var follow = []
+        // var nofollow = []
+        for(f of u.following) {
+            let user = await User.findById(f._id)
+            let email = user.email
+            for(x of all) {
+                if(x.email === u.email)
+                    continue
+                if(email===x.email)
+                    follow.push(x)
+                else
+                    nofollow.push(x)
+            }
+        }
+        if(name != "")
+        {  
+            var fl = []
+            var nfl = []
+            for(user of all) {
+                if(user.firstname.includes(name))
+                    {   
+                        let flag = 0
+                        for(f of u.following) {
+                            let user = await User.findById(f._id)
+                            let email = user.email
+                            if(email===user.email)
+                                {fl.push(user)
+                                flag++}
+                            else
+                                {nfl.push(user)
+                                flag++}
+                        }
+                        if(flag===0)
+                            nfl.push(user)
+                        
+                    }
+                else if(user.lastname.includes(name))
+                {   let flag = 0
+                    for(f of u.following) {
+                        let user = await User.findById(f._id)
+                        let email = user.email
+                        if(email===user.email)
+                            {fl.push(user)
+                            flag++}
+                        else
+                           { nfl.push(user)
+                        flag++}
+                    }   
+
+                    if(flag===0)
+                    nfl.push(user)
+                }
+    
+            }
+            nofollow = nfl
+            follow = fl
+        }
+
+
+        res.status(200).render('follow',{'user':u, 'follow': follow, 'nofollow':nofollow})
+    } catch(e) {
+        res.status(500).send(e)
     }
 })
 

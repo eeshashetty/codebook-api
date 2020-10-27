@@ -37,8 +37,7 @@ const userSchema = new mongoose.Schema({
         required: true,
         validate(value) {
             const today = new Date()
-            const birthday = new Date(value)
-            const age = today - birthday
+            const age = today - value
             if(age/31536000000 < 13) {
                 throw new Error('Under 13 years')
             }
@@ -87,9 +86,8 @@ userSchema.virtual('posts', {
 })
 
 userSchema.methods.generateAuthToken = async function () {
-    const user = this
-    const token = jwt.sign({_id: user._id.toString()}, process.env.JWT_SECRET)
-
+    const user = this.user
+    const token = jwt.sign({_id: user._id.toString()}, 'codebook-secret')
     user.tokens = user.tokens.concat({token})
     await user.save()
 

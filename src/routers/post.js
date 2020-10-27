@@ -1,45 +1,34 @@
 const express = require('express')
 const router = new express.Router()
+const User = require('../models/user')
 const Post = require('../models/post')
 const auth = require('../middleware/auth')
 
 // Create a new Post
-router.post('/api/posts', auth, async (req,res) => {
+router.post('/api/posts', async (req,res) => {
+    const user = await User.findById(req.query['user'])
     const post = new Post({
-        ...req.body,
-        owner: req.user
+        description: req.body.description,
+        likes: 0,
+        creator: user._id,
+        creator_name: `${user.firstname} ${user.lastname}`
     })
     try {
         const result = await post.save()
-        res.status(201).send(result)
+        console.log(result)
+        res.status(201).redirect(`/api/users/me?user=${result.creator}`);
     } catch (e) {
         res.status(400).send(e)
     }
 })
 
-router.get('/api/posts', auth, async (req,res) => {
-    const match = {}
-    const sort = {}
-
-    if(req.query.sortBy) {
-        const parts = req.query.sortBy.split(':')
-        sort[parts[0]] = parts[1]==='desc'? -1 : 1
-            
-    }
+router.get('/api/posts', async (req,res) => {
     try {
-        await req.user.populate({
-            path: 'posts',
-            match,
-            options: {
-                limit: parseInt(req.query.limit),
-                skip: parseInt(req.query.skip),
-                sort
-            }
-        }).execPopulate()
-        res.send(req.user.posts)
-    } catch (e) {
+        const posts = await Post.find()
+        res.send(posts)
+    } catch(e) {
         res.status(500).send(e)
-    }
+    }  
 })
 
 router.get('/api/posts/:id', auth, async (req,res) => {
@@ -52,15 +41,21 @@ router.get('/api/posts/:id', auth, async (req,res) => {
     }
 })
 
-router.patch('/api/posts/:id/like', auth, async (req,res) => {
+router.get('/api/posts/:id/like', async (req,res) => {
+    const id = req.query['user']
     try {
-        const post = await Post.findOne({_id})
-        post[likes] += 1
+        const pid = req.params.id
+        const post = await Post.findById(pid)
+        let likes = post.likes
+        post.likes = likes + 1
+        // post.likes = post.likes + 1
+        // console.log(post)
+        // console.log(post.likes)
         await post.save()
-        if (!post) {
-            return res.status(404).send()
-        }
-        res.send(post)
+        // if (!post) {
+        //     return res.status(404).send()
+        // }
+        res.redirect(`/api/feed?user=${id}`)
     } catch (e) {
         res.status(500).send(e)
     }

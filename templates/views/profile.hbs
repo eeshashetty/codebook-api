@@ -1,0 +1,180 @@
+<html>
+    <head>
+        <title>Your Codebook Profile</title>
+        <style>
+            @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap');
+            @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap');
+            body {
+                font-family: 'Montserrat', sans-serif;
+                background-color: #000000;
+            }
+
+            a{
+                text-decoration: none;
+                color: white;
+            }
+            .col {
+                color: white;
+                font-size: 18;
+                padding: 30px;
+                border-radius: 9px;
+                display: grid;
+                grid-template-columns: auto auto;
+                width: max-content;
+                margin: 20px;
+                margin-top: 120px;
+                margin-right: auto;
+                margin-left: auto;
+            }
+
+            .row {
+                display: grid;
+                grid-template-rows: auto auto;
+                width: max-content;
+                margin-left: 315px;
+            }
+
+            .fp{
+                margin-top: 10px;
+                text-align: center;
+            }
+
+            .nav {
+                display: inline-block;
+                overflow: hidden;
+                position: fixed;
+                top:0;
+                background-color: #2E3031;
+                width: 110%;
+                color: white;
+                margin-left: -10px;
+                margin-top: -10px;
+                margin-bottom: 25px;
+            }
+
+            .navp {
+                display: inline-block;
+                padding: 15px;
+            }
+
+            .navp:hover{
+                font-weight: bold;
+            }
+
+            .box {
+                width: 134px;
+                height: 40px;
+                background-color: #FA759E;
+                color: white;
+                margin: 10px;
+            }
+            .grid{
+                display: inline-grid;
+                grid-column-gap: 50px;
+                grid-row-gap: 50px;
+                grid-template-columns: auto auto auto;
+            }
+            .textb {
+                word-wrap: break-word;
+                width: 420px;
+                height: 280px;
+                background-color: #2F3443;
+            }
+
+            .name{
+                margin-top: 30px;
+                font-size: 22px;
+                color: white;
+            }
+            textarea {
+                background-color: #2F3443;
+                font-family: 'Montserrat', sans-serif;
+                border: none;
+                color: white;
+                padding: 20px;
+                text-align: center;
+                font-size: 15px;
+                resize: none;
+            }
+            .ta{
+                font-family: 'Montserrat', sans-serif;
+                color: white;
+                height: 70px;
+                overflow: auto;
+                margin-top: 20px;
+                padding-left: 20px;
+                padding-right: 20px;
+                width: 300px;
+                text-align: left;
+                font-size: 15px;
+            }
+
+            .user{
+                font-size: 25px;
+                color: white;
+                text-align: left;
+                margin-top: 35px;
+                margin-left: 58px;
+            }
+
+            #time {
+                font-family: 'Montserrat', sans-serif;
+                color: #FA759E;
+                text-align: left;
+                margin-top: -10px;
+                font-size: 12px;
+                width: 300px;
+            }
+            .postbtn{
+                padding: 10px;
+                margin-left: 250px;
+                background-color: #FA759E;
+                border: none; 
+                color: white;
+                width: 100px;
+                border-radius: 9px;
+            }
+        </style>
+    </head>
+    <body>
+        {{>header}}
+        <div style="height: 1500px;">
+        <div class='col'>
+            <div style="margin-top: 15px;">
+                <span style="font-weight: bold; font-size: 46;">{{ user.firstname }} {{ user.lastname }}</span> <br>
+                {{ user.email }}
+            </div>
+            <div class="row">
+                <div class="box"><p class="fp"><b>
+                {{ user.followers.length }}</b> Followers</p></div>
+                <div class="box"><p class="fp"><b>
+                {{ user.following.length }}</b> Following</p></div>
+            </div>
+        </div>
+        <hr><br><br>
+        <center>
+        <div class="grid">
+            <div class="textb">
+                <p class="name">{{user.firstname}} {{user.lastname}} <i>(New Post)</i></p>
+            <center>
+            <form id="post" class="post" action="/api/posts?user={{user.id}}" method="POST">
+            <textarea placeholder="What are you upto?" rows=4 cols=20  name="description" form="post"></textarea>
+            </center>
+            <input class="postbtn" type="submit" value="Post"/>
+            </form>
+            </div>
+        {{#each posts}}
+        <div class="textb">
+            <center>
+            <p class="user">{{this.creator_name}}</p>
+            <p id="time"><b>Created on </b>{{this.createdAt}}</p>
+            <p class="ta">{{this.description}}</p>
+            <p style="text-align: center; font-size: 20px; color:white; margin-top:20px;">{{this.likes}} Likes</p>
+            </center>
+        </div>
+        {{/each}}
+        </div>
+        </center>
+        </div>
+    </body>
+</html>
